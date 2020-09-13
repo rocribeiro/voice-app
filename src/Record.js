@@ -3,9 +3,7 @@ import { View, TouchableWithoutFeedback, Text,Image,Vibration,StyleSheet,Touchab
 import { Audio } from 'expo-av'
 import * as Permissions from 'expo-permissions';
 import * as FileSystem from 'expo-file-system';
-
-
-
+import axios from 'react-native-axios';
 
 export default class Record extends Component {
     state = {
@@ -87,6 +85,19 @@ export default class Record extends Component {
             await this.recording.stopAndUnloadAsync();
             let url = this.recording.getURI();
             console.log(url);
+              await axios({
+                method: 'post',
+                url: "https://onesignal.com/api/v1/notifications",
+                data: {
+                    "nome_arquivo":"audio.wav",
+                    "encoded_audio":url,
+                },
+                headers: {'Authorization':'Token 6c03b4f362fc1d16e9dcca6554b88085f92b90b5','Content-Type': 'application/json'}
+              }).then(function (response) {
+                console.log(response);
+                }).catch(error => {
+                    console.log(error)
+                })
             const data = await FileSystem.readAsStringAsync(url,{
               encoding: FileSystem.EncodingType.Base64
             })
@@ -124,7 +135,7 @@ export default class Record extends Component {
               stopGravacao();
             }
             this.recording = recording;
-            console.log(this.state.isRecording+" Gravando")
+            console.log(this.state.isRecording+" Gravando");
           }
       
           RecordPress = () => {
@@ -155,6 +166,7 @@ const styles = StyleSheet.create({
   },
   myButton:{
     borderWidth: 4,
+    borderColor:'#00FF00',
     padding: 5,
     height: 300,
     width: 300,  //The Width must be the same as the height
