@@ -65,8 +65,8 @@ export default class Record extends Component {
 
         const recordingOptions = {
           android: {
-            extension: '.m4a',
-            outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
+            extension: '.mpeg',
+            outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG2TS,
             audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
             sampleRate: 44100,
             numberOfChannels: 2,
@@ -95,7 +95,8 @@ export default class Record extends Component {
             method='POST'
             headers={
               'Content-Type': 'application/json',
-              'Authorization':'Token dc2d9fe14e318c2204c1764b2b74f273a6c9065a'
+              'Authorization':'Token dc2d9fe14e318c2204c1764b2b74f273a6c9065a',
+              'Transfer-Encoding': 'chunked'
             }
             body =JSON.stringify({
               nome_arquivo: 'audio.wav',
