@@ -13,6 +13,7 @@ export default class Record extends Component {
         isRecording: false,
         isLoading: false,
         borderColor:"#00FF00",
+        btnText:'Aperte para falar com a Sofia!'
       }
     
       constructor(props) {
@@ -159,9 +160,9 @@ export default class Record extends Component {
           RecordPress = () => {
             Vibration.vibrate(50)
             if(this.state.borderColor =="#00FF00"){
-              this.setState({borderColor: '#ff0000'});
+              this.setState({borderColor: '#ff0000', btnText:'Pode falar!'});
             }else{
-              this.setState({borderColor: '#00FF00'});
+              this.setState({borderColor: '#00FF00',btnText:'Aperte para falar com a Sofia!'});
             }       
             if (this.state.isRecording) {
               this.setState({ isRecording: false })
@@ -174,7 +175,8 @@ export default class Record extends Component {
           }
         return (
           <TouchableOpacity onPress={() => RecordPress()} >
-            <View style={{borderWidth: 4,borderColor:this.state.borderColor,color: 'black',height: 300,width: 300,borderRadius:400,backgroundColor:'rgb( 220, 193, 102)'}}>
+            <View style={{borderWidth: 4,borderColor:this.state.borderColor,color: 'black',height: 300,width: 300,borderRadius:400,backgroundColor:'rgb( 220, 193, 102)',justifyContent: 'center',alignItems: 'center'}}>
+        <Text style={{ fontWeight: 'bold', fontSize:20,color:'#17293f' }}>{this.state.btnText}</Text>
             </View>
           </TouchableOpacity>
         )
