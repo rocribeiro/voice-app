@@ -4,6 +4,8 @@ import { Audio } from 'expo-av'
 import * as Permissions from 'expo-permissions';
 import * as FileSystem from 'expo-file-system';
 import axios from 'react-native-axios';
+import fetchWithTimeout from 'fetch-timeout';
+
 
 export default class Record extends Component {
     state = {
@@ -11,6 +13,7 @@ export default class Record extends Component {
         isRecording: false,
         isLoading: false,
         borderColor:"#00FF00",
+        btnText:'Aperte para falar com a Sofia!'
       }
     
       constructor(props) {
@@ -62,8 +65,8 @@ export default class Record extends Component {
 
         const recordingOptions = {
           android: {
-            extension: '.wav',
-            outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
+            extension: '.mpeg',
+            outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG2TS,
             audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
             sampleRate: 44100,
             numberOfChannels: 2,
@@ -81,27 +84,44 @@ export default class Record extends Component {
           },
         };
           
-          stopGravacao = async () => {
+         stopGravacao = async () => {
             await this.recording.stopAndUnloadAsync();
             let url = this.recording.getURI();
             console.log(url);
-              await axios({
-                method: 'post',
-                url: "https://onesignal.com/api/v1/notifications",
-                data: {
-                    "nome_arquivo":"audio.wav",
-                    "encoded_audio":url,
-                },
-                headers: {'Authorization':'Token 6c03b4f362fc1d16e9dcca6554b88085f92b90b5','Content-Type': 'application/json'}
-              }).then(function (response) {
-                console.log(response);
-                }).catch(error => {
-                    console.log(error)
-                })
-            const data = await FileSystem.readAsStringAsync(url,{
+            const base64 = await FileSystem.readAsStringAsync(url,{
               encoding: FileSystem.EncodingType.Base64
             })
-            console.log(data);
+            console.log(base64);
+            method='POST'
+            headers={
+              'Content-Type': 'application/json',
+              'Authorization':'Token dc2d9fe14e318c2204c1764b2b74f273a6c9065a',
+              'Transfer-Encoding': 'chunked'
+            }
+            body =JSON.stringify({
+              nome_arquivo: 'audio.wav',
+              encoded_audio: base64,
+            })
+            const requestInfo = {
+                method,
+                headers,
+                body,
+            };
+            
+            console.log(requestInfo.method);
+            console.log(requestInfo.body);
+            console.log(requestInfo.headers);
+            const url1 = 'https://safravoice.herokuapp.com/api/process_voice'
+            let data = await fetchWithTimeout(url1, requestInfo, 30000).then(res => {
+              if (res.status !== 200) {
+                throw new Error('Status code not OK', res.status);
+              } else {
+                return res.json();
+              }
+            });
+
+            console.log(data)
+           
             const soundObject = new Audio.Sound();
             try {
               soundObject.loadAsync({ uri: url }).then(() => {
@@ -139,7 +159,12 @@ export default class Record extends Component {
           }
       
           RecordPress = () => {
-            Vibration.vibrate(400)
+            Vibration.vibrate(50)
+            if(this.state.borderColor =="#00FF00"){
+              this.setState({borderColor: '#ff0000', btnText:'Pode falar!'});
+            }else{
+              this.setState({borderColor: '#00FF00',btnText:'Aperte para falar com a Sofia!'});
+            }       
             if (this.state.isRecording) {
               this.setState({ isRecording: false })
               stopGravacao()
@@ -151,7 +176,8 @@ export default class Record extends Component {
           }
         return (
           <TouchableOpacity onPress={() => RecordPress()} >
-            <View style={styles.myButton}>
+            <View style={{borderWidth: 4,borderColor:this.state.borderColor,color: 'black',height: 300,width: 300,borderRadius:400,backgroundColor:'rgb( 220, 193, 102)',justifyContent: 'center',alignItems: 'center'}}>
+        <Text style={{ fontWeight: 'bold', fontSize:20,color:'#17293f' }}>{this.state.btnText}</Text>
             </View>
           </TouchableOpacity>
         )
@@ -163,15 +189,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#17293f',
-  },
-  myButton:{
-    borderWidth: 4,
-    borderColor:'#00FF00',
-    padding: 5,
-    height: 300,
-    width: 300,  //The Width must be the same as the height
-    borderRadius:400, //Then Make the Border Radius twice the size of width or Height   
-    backgroundColor:'rgb( 220, 193, 102)',
-
   }
 });
