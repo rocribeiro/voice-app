@@ -119,16 +119,78 @@ export default class Record extends Component {
                 return res.json();
               }
             });
-
-            console.log(data)
-           
-            const soundObject = new Audio.Sound();
-            try {
-              soundObject.loadAsync({ uri: url }).then(() => {
-                soundObject.playAsync()
-              })      
-            } catch (error) {
+            let play ='';
+            if(data.intention =='Banking_Transfer_Money'){
+              const soundObject = new Audio.Sound();
+              try {
+                const { sound: soundObject, status } = await Audio.Sound.createAsync(
+                  require('../Sofia/pedirtransferencia.wav'),
+                  { shouldPlay: true }
+                );
+                // Your sound is playing!
+              } catch (error) {
+                // An error occurred!
+              }
+            }else if(data.intention == 'VocalizaTelefone'){
+              const soundObject = new Audio.Sound();
+              try {
+                const { sound: soundObject, status } = await Audio.Sound.createAsync(
+                  require('../Sofia/compreendertelefone.wav'),
+                  { shouldPlay: true }
+                );
+                // Your sound is playing!
+              } catch (error) {
+                // An error occurred!
+              }
+            }else if(data.intention=='welcome'){
+              const soundObject = new Audio.Sound();
+              try {
+                const { sound: soundObject, status } = await Audio.Sound.createAsync(
+                  require('../Sofia/bemvindo.wav'),
+                  { shouldPlay: true }
+                );
+                // Your sound is playing!
+              } catch (error) {
+                // An error occurred!
+              }
+              
+            }else if(data.intention=='GeneralEnding'){
+              const soundObject = new Audio.Sound();
+              try {
+                const { sound: soundObject, status } = await Audio.Sound.createAsync(
+                  require( '../Sofia/adeus02.wav'),
+                  { shouldPlay: true }
+                );
+                // Your sound is playing!
+              } catch (error) {
+                // An error occurred!
+              }
+            }else if(data.intention=='General_Agent_Capabilities'){
+              const soundObject = new Audio.Sound();
+              try {
+                const { sound: soundObject, status } = await Audio.Sound.createAsync(
+                  require('../Sofia/listaracoes.wav'),
+                  { shouldPlay: true }
+                );
+                // Your sound is playing!
+              } catch (error) {
+                // An error occurred!
+              }
+              
+            }else if(data.intention=='Validar'){
+              const soundObject = new Audio.Sound();
+              try {
+                const { sound: soundObject, status } = await Audio.Sound.createAsync(
+                  require('../Sofia/validar.wav'),
+                  { shouldPlay: true }
+                );
+                // Your sound is playing!
+              } catch (error) {
+                // An error occurred!
+              }
+              
             }
+          
           }
 
           startGravacao = async () => {
