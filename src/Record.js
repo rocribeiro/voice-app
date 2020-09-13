@@ -119,7 +119,7 @@ export default class Record extends Component {
                 return res.json();
               }
             });
-            let play ='';
+            console.log(data.intention);
             if(data.intention =='Banking_Transfer_Money'){
               const soundObject = new Audio.Sound();
               try {
@@ -177,7 +177,7 @@ export default class Record extends Component {
                 // An error occurred!
               }
               
-            }else if(data.intention=='Validar'){
+            }else if(data.intention=='sucesso'){
               const soundObject = new Audio.Sound();
               try {
                 const { sound: soundObject, status } = await Audio.Sound.createAsync(
